@@ -1,28 +1,14 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
-console.log('DB ENV:', process.env.MONGODB_URI);
-
-
 import mongoose from "mongoose";
-// import dotenv from "dotenv";
-import path from "path";
-import { fileURLToPath } from "url";
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-dotenv.config({ path: path.resolve(__dirname, "../../.env") });
+console.log("MONGO_URI:", process.env.MONGO_URI);
 
 
 export const connectDB = async () => {
-    try {
-       await mongoose.connect(process.env.MONGODB_URI);
-
-console.log("MongoDB connected successfully")    
-
-} catch (error) {
-    console.error("Error connecting to MongoDB:", error);
-    process.exit(1); // Exit the process with failure
-        }
-    };
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("MONGODB CONNECTED SUCCESSFULLY!");
+  } catch (error) {
+    console.error("Error connecting to MONGODB", error);
+    process.exit(1); // exit with failure
+  }
+};

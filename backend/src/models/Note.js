@@ -1,19 +1,22 @@
 import mongoose from "mongoose";
 
-// 1. Create a schema for the Note model
-// 2. model based on the schema
+// 1st step: You need to create a schema
+// 2nd step: You would create a model based off of that schema
 
-const noteSchema = new mongoose.Schema({
-  title: { 
-    type: String,
-    required: true,
+const noteSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+    },
+    content: {
+      type: String,
+      required: true,
+    },
+    order: { type: Number, default: 0 }
+
   },
-  content: {
-    type: String,
-    required: true,
-  },    
-},
-{ timestamps: true } // Automatically add createdAt and updatedAt fields
+  { timestamps: true } // createdAt, updatedAt
 );
 
 const Note = mongoose.model("Note", noteSchema);

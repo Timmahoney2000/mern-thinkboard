@@ -8,16 +8,24 @@ import toast from "react-hot-toast";
 
 const NoteCard = ({ note, index, moveNote, setNotes }) => {
   const ref = useRef(null);
+  
+  console.log(`🎴 NoteCard ${index} rendered:`, { id: note._id, title: note.title });
 
   // DROP TARGET
   const [, drop] = useDrop({
     accept: "NOTE",
     hover(item, monitor) {
-      if (!ref.current) return;
+      if (!ref.current) {
+        console.log("❌ No ref.current for note:", note._id);
+        return;
+      }
 
       const dragIndex = item.index;
       const hoverIndex = index;
+      
       if (dragIndex === hoverIndex) return;
+
+      console.log(`🎯 Hovering: drag ${dragIndex} -> hover ${hoverIndex}`);
 
       const hoverBoundingRect = ref.current.getBoundingClientRect();
       const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
@@ -30,6 +38,7 @@ const NoteCard = ({ note, index, moveNote, setNotes }) => {
       if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
       if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
 
+      console.log(`✅ Calling moveNote: ${dragIndex} -> ${hoverIndex}`);
       moveNote(dragIndex, hoverIndex);
       item.index = hoverIndex;
     },
@@ -39,9 +48,13 @@ const NoteCard = ({ note, index, moveNote, setNotes }) => {
   const [{ isDragging }, drag] = useDrag({
     type: "NOTE",
     item: { id: note._id, index },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+    collect: (monitor) => {
+      const dragging = monitor.isDragging();
+      if (dragging) {
+        console.log(`🚀 Dragging note ${index}:`, note.title);
+      }
+      return { isDragging: dragging };
+    },
   });
 
   // Connect drag and drop to the ref
@@ -62,7 +75,7 @@ const NoteCard = ({ note, index, moveNote, setNotes }) => {
   return (
     <Link
       to={`/note/${note._id}`}
-      ref={ref} // ✅ attach drag & drop ref
+      ref={ref}
       className={`card bg-base-100 hover:shadow-lg transition-all duration-200 
       border-t-4 border-solid border-[#ff00c8] cursor-move ${
         isDragging ? "opacity-50" : ""
@@ -91,6 +104,3 @@ const NoteCard = ({ note, index, moveNote, setNotes }) => {
 };
 
 export default NoteCard;
-
-
-

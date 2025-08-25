@@ -38,19 +38,27 @@ export async function createNote(req, res) {
 }
 
 export async function reorderNotes(req, res) {
- const { orderIds } = req.body;
+  console.log("📥 reorderNotes called");
+  console.log("Request body:", req.body);
+  
+  try {
+    const { noteIds } = req.body; // Fixed: was orderIds
+    
+    if (!noteIds || !Array.isArray(noteIds)) {
+      return res.status(400).json({ message: "Invalid note IDs array" });
+    }
 
- try {
-  for (let i = 0; i < orderIds.length; i++) {
-    await Note.findByIdAndUpdate(orderedIds[i], { order: i });
+    for (let i = 0; i < noteIds.length; i++) {
+      await Note.findByIdAndUpdate(noteIds[i], { order: i }); // Using 'order' field
+    }
+    
+    res.status(200).json({ message: "Note order updated successfully" });
+    
+  } catch (error) {
+    console.error("❌ Error in reorderNotes:", error);
+    res.status(500).json({ message: "Failed to reorder notes" });
   }
-
-  const updatedNotes = await Note.find().sort({ order: 1 });
-  res.status(200).json(updatedNotes);
- } catch (error) {
-  res.status(500).json({ message: "Failed to reorder notes" });
- }
- };
+}
 
 export async function updateNote(req, res) {
   try {

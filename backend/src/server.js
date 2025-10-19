@@ -33,13 +33,18 @@ app.use(rateLimiter);
 app.use("/api/notes", notesRoutes);
 
 // Serve static files in production
+// Serve static files in production
 if (process.env.NODE_ENV === "production") {
   const frontendPath = path.join(__dirname, "../../frontend/dist");
   app.use(express.static(frontendPath));
 
-  // Handle React routing - send all non-API requests to index.html
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(frontendPath, "index.html"));
+  // Replace app.get("*", ...) with this:
+  app.use((req, res, next) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendPath, "index.html"));
+    } else {
+      next();
+    }
   });
 }
 
